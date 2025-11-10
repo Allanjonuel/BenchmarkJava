@@ -49,17 +49,23 @@ public class BenchmarkTest00006 extends HttpServlet {
         // URL Decode the header value since req.getHeader() doesn't. Unlike req.getParameter().
         param = java.net.URLDecoder.decode(param, "UTF-8");
 
+        // Sanitize input to prevent command injection
+        // Only allow alphanumeric characters, spaces, and basic punctuation
+        String sanitizedParam = sanitizeInput(param);
+
         java.util.List<String> argList = new java.util.ArrayList<String>();
 
         String osName = System.getProperty("os.name");
         if (osName.indexOf("Windows") != -1) {
             argList.add("cmd.exe");
             argList.add("/c");
+            argList.add("echo");
+            argList.add(sanitizedParam);
         } else {
             argList.add("sh");
             argList.add("-c");
+            argList.add("echo " + sanitizedParam);
         }
-        argList.add("echo " + param);
 
         ProcessBuilder pb = new ProcessBuilder();
 
@@ -73,5 +79,21 @@ public class BenchmarkTest00006 extends HttpServlet {
                     "Problem executing cmdi - java.lang.ProcessBuilder(java.util.List) Test Case");
             throw new ServletException(e);
         }
+    }
+
+    /**
+     * Sanitizes user input to prevent command injection attacks.
+     * Only allows alphanumeric characters, spaces, and basic safe punctuation.
+     * 
+     * @param input The input string to sanitize
+     * @return Sanitized string safe for use in commands
+     */
+    private String sanitizeInput(String input) {
+        if (input == null) {
+            return "";
+        }
+        // Remove any characters that could be used for command injection
+        // Allow only alphanumeric, spaces, dots, hyphens, and underscores
+        return input.replaceAll("[^a-zA-Z0-9\\s._-]", "");
     }
 }
