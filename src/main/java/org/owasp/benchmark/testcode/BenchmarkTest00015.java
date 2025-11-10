@@ -51,17 +51,23 @@ public class BenchmarkTest00015 extends HttpServlet {
         // URL Decode the header value since req.getHeaders() doesn't. Unlike req.getParameters().
         param = java.net.URLDecoder.decode(param, "UTF-8");
 
+        // Sanitize the input to prevent command injection
+        // Remove any characters that could be used for command injection
+        String sanitizedParam = param.replaceAll("[^a-zA-Z0-9\\s.-]", "");
+        
         java.util.List<String> argList = new java.util.ArrayList<String>();
 
         String osName = System.getProperty("os.name");
         if (osName.indexOf("Windows") != -1) {
             argList.add("cmd.exe");
             argList.add("/c");
+            argList.add("echo");
+            argList.add(sanitizedParam);
         } else {
-            argList.add("sh");
-            argList.add("-c");
+            // Use /bin/echo with separate argument to avoid shell interpretation
+            argList.add("/bin/echo");
+            argList.add(sanitizedParam);
         }
-        argList.add("echo " + param);
 
         ProcessBuilder pb = new ProcessBuilder();
 
