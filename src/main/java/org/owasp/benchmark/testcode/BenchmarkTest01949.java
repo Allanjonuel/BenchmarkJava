@@ -56,7 +56,7 @@ public class BenchmarkTest01949 extends HttpServlet {
             String rememberMeKey =
                     Double.toString(rand).substring(2); // Trim off the 0. at the front.
 
-            String user = "SafeDonna";
+            String user = System.getProperty("benchmark.user", "DefaultUser");
             String fullClassName = this.getClass().getName();
             String testCaseNumber =
                     fullClassName.substring(
