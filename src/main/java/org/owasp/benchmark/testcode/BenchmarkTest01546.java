@@ -48,12 +48,15 @@ public class BenchmarkTest01546 extends HttpServlet {
         String bar = new Test().doSomething(request, param);
 
         // javax.servlet.http.HttpSession.putValue(java.lang.String^,java.lang.Object)
-        request.getSession().putValue(bar, "10340");
+        // Fix: Sanitize the session key to prevent trust boundary violation
+        // Use a fixed prefix and sanitize the user input to ensure only safe characters
+        String sanitizedKey = "user_" + bar.replaceAll("[^a-zA-Z0-9_-]", "_");
+        request.getSession().putValue(sanitizedKey, "10340");
 
         response.getWriter()
                 .println(
                         "Item: '"
-                                + org.owasp.benchmark.helpers.Utils.encodeForHTML(bar)
+                                + org.owasp.benchmark.helpers.Utils.encodeForHTML(sanitizedKey)
                                 + "' with value: 10340 saved in session.");
     } // end doPost
 
