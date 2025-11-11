@@ -44,6 +44,21 @@ public class DataBaseServer {
         return new ResponseEntity<List<XMLMessage>>(resp, HttpStatus.OK);
     }
 
+    /**
+     * Test database endpoint.
+     * 
+     * <p>CSRF Protection: This endpoint is protected against Cross-Site Request Forgery (CSRF)
+     * attacks by Spring Security's CSRF protection, which is enabled globally in SecurityConfig.
+     * Spring Security automatically validates CSRF tokens for all state-changing HTTP methods
+     * (POST, PUT, DELETE, PATCH).
+     *
+     * @param model the person model from request body
+     * @param request the HTTP servlet request
+     * @param response the HTTP servlet response
+     * @return response entity with list of XML messages
+     * @throws ServletException if a servlet error occurs
+     * @throws IOException if an I/O error occurs
+     */
     @PostMapping(value = "/testdb")
     public ResponseEntity<List<XMLMessage>> createOrder2(
             @RequestBody Person model, HttpServletRequest request, HttpServletResponse response)

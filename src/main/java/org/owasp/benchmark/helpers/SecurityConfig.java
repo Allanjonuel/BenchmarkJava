@@ -28,7 +28,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // Enable CSRF protection for all requests
-        http.csrf().and().authorizeRequests().anyRequest().permitAll();
+        // Enable CSRF protection for all requests including POST, PUT, DELETE, and PATCH
+        // CSRF tokens are required for all state-changing operations
+        http.csrf()
+                .and()
+                .authorizeRequests()
+                .anyRequest()
+                .permitAll();
     }
 }
