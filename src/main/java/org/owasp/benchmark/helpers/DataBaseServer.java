@@ -37,7 +37,7 @@ public class DataBaseServer {
 
     @GetMapping(value = "/resetdb")
     public ResponseEntity<List<XMLMessage>> getOtherOrder(
-            @RequestBody Person model, HttpServletRequest request, HttpServletResponse response)
+            HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         ArrayList<XMLMessage> resp = new ArrayList<XMLMessage>();
         resp.add(new XMLMessage("Not Implemented."));
