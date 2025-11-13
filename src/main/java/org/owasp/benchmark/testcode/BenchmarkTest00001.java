@@ -67,8 +67,21 @@ public class BenchmarkTest00001 extends HttpServlet {
         java.io.FileInputStream fis = null;
 
         try {
-            fileName = org.owasp.benchmark.helpers.Utils.TESTFILES_DIR + param;
-            fis = new java.io.FileInputStream(new java.io.File(fileName));
+            // Sanitize the param to prevent path traversal
+            java.io.File baseDir = new java.io.File(org.owasp.benchmark.helpers.Utils.TESTFILES_DIR);
+            java.io.File requestedFile = new java.io.File(baseDir, param);
+            
+            // Validate that the canonical path is within the base directory
+            String canonicalBasePath = baseDir.getCanonicalPath();
+            String canonicalRequestedPath = requestedFile.getCanonicalPath();
+            
+            if (!canonicalRequestedPath.startsWith(canonicalBasePath + java.io.File.separator) 
+                && !canonicalRequestedPath.equals(canonicalBasePath)) {
+                throw new SecurityException("Path traversal attempt detected");
+            }
+            
+            fileName = canonicalRequestedPath;
+            fis = new java.io.FileInputStream(requestedFile);
             byte[] b = new byte[1000];
             int size = fis.read(b);
             response.getWriter()
